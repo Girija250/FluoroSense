@@ -1,0 +1,112 @@
+name: FluoroSense CI/CD Automation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python Backend Dependencies
+        working-directory: ./backend
+        run: pip install -r requirements.txt
+
+      - name: Install Automation Testing Dependencies
+        working-directory: ./automation_tests
+        run: pip install -r requirements.txt
+
+      - name: Setup Node.js (If required)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Assuming Flutter is installed and in the PATH of the self-hosted runner
+      - name: Install Flutter Dependencies
+        working-directory: ./fluorosense
+        run: flutter pub get
+      - name: Flutter Doctor
+        run: flutter doctor -v
+
+      - name: Start FastAPI Backend
+        working-directory: ./backend
+        shell: powershell
+        run: |
+          Start-Process python -ArgumentList "-m uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+      - name: Wait for Backend to be Healthy
+        run: |
+          $max_retries = 30
+          $retry_count = 0
+          $url = "http://localhost:8000/"
+          while ($retry_count -lt $max_retries) {
+            try {
+              $response = Invoke-WebRequest -Uri $url -UseBasicParsing -ErrorAction Stop
+              if ($response.StatusCode -eq 200) {
+                Write-Host "Backend is healthy!"
+                break
+              }
+            } catch {
+              Write-Host "Waiting for backend..."
+              Start-Sleep -Seconds 2
+              $retry_count++
+            }
+          }
+          if ($retry_count -ge $max_retries) {
+            Write-Error "Backend failed to start in time."
+            exit 1
+          }
+        shell: powershell
+
+      - name: Run Field Validation Tests
+        working-directory: ./automation_tests
+        run: python validation_tests.py
+
+      - name: Run Vulnerability/Security Tests
+        working-directory: ./automation_tests
+        run: python security_tests.py
+
+      - name: Run Load/Performance Tests
+        working-directory: ./automation_tests
+        run: python load_tests.py
+
+      - name: Run Selenium Web Automation Tests
+        working-directory: ./automation_tests
+        run: python selenium_tests.py
+      - name: Verify Android Device
+        shell: powershell
+        run: |
+          & "C:\Users\balas\AppData\Local\Android\sdk\platform-tools\adb.exe" devices
+      - name: Run Appium Mobile Automation Tests
+        working-directory: ./automation_tests
+        run: python appium_tests.py
+        # Continues on error in case the Appium server is not fully configured on the runner
+        continue-on-error: true
+
+      - name: Compress Reports
+        working-directory: ./automation_tests
+        run: Compress-Archive -Path "..\reports\*" -DestinationPath "..\FluoroSense_Test_Reports.zip" -Force
+        shell: powershell
+
+      - name: Upload Test Reports Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FluoroSense_Test_Reports
+          path: FluoroSense_Test_Reports.zip
+
+      - name: Cleanup Background Processes
+        if: always()
+        run: |
+          # Stop the uvicorn process gracefully
+          Stop-Process -Name "uvicorn" -ErrorAction SilentlyContinue
+        shell: powershell
