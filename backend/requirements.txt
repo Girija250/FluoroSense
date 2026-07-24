@@ -1,0 +1,25 @@
+# FastAPI and Server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database
+# Removed sqlalchemy, pydantic (already there)
+
+# Authentication
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==4.0.1
+
+# Firebase Admin SDK for Firestore
+firebase-admin
+supabase
+
+# Machine Learning - Inference
+tensorflow
+
+# Machine Learning - Training
+pandas
+scikit-learn
+matplotlib
+Pillow
