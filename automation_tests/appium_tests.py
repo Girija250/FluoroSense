@@ -10,18 +10,17 @@ from selenium.webdriver.support import expected_conditions as EC
 from report_generator import generate_excel_report
 
 SCREENS = [
-    "App Launch", "Splash Screen", "Home Screen", "Login Screen", "Signup Screen", 
-    "Language Selection", "Myth Checker", "Learn Screen", "Brushing Timer", 
-    "Profile Screen", "Notification Screen", "Settings", "Brushing Tracker", 
-    "Reports Screen", "Video Player", "Category Selection", "Patient Details", 
-    "Image Upload", "Camera Screen", "Gallery Selection", "AI Prediction", 
-    "Recommendation Screen", "Logout Flow"
+    "Splash Screen", "Login Screen", "Registration Screen", "Home Screen", 
+    "About Fluorosis Section", "Awareness Tips Section", "Steps Guide Section", 
+    "Screening Questionnaire", "Child (<9 years) Form", "Individual (>9 years) Form", 
+    "Upload Intraoral Image Screen", "AI Analysis Engine", "Results & Recommendations", 
+    "History Screen", "Profile Update Screen", "Logout Flow"
 ]
 
 ACTIONS = [
-    "Load Time", "Button Click", "Input Field", "Scrolling", "Navigation", 
-    "Data Load", "Validation", "Performance", "UI Rendering", "State Management", 
-    "API Response", "Error Handling", "Form Submission", "Image Processing"
+    "Button Click", "Navigation Transition", "Data Fetch", "Scrolling", 
+    "Form Validation", "Image Upload Validation", "Supabase DB Sync", 
+    "AI Prediction Rendering", "Input Field Interaction", "State Update"
 ]
 
 def get_appium_driver():

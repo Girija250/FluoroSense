@@ -7,18 +7,18 @@ from selenium.webdriver.chrome.options import Options
 from report_generator import generate_excel_report
 
 SCREENS = [
-    "Web App Launch", "Web Splash Screen", "Web Home", "Web Login Screen", "Web Signup", 
-    "Web Language Selection", "Web Myth Checker", "Web Learn Screen", "Web Brushing Timer", 
-    "Web Profile", "Web Notification", "Web Settings", "Web Tracker", 
-    "Web Reports", "Web Video Player", "Web Category Select", "Web Patient Form", 
-    "Web File Upload", "Web Image Capture", "Web AI Engine", 
-    "Web Recommendations", "Web Logout"
+    "Web Splash Screen", "Web Login Screen", "Web Registration Screen", "Web Home Screen", 
+    "Web About Fluorosis", "Web Awareness Tips", "Web Steps Guide", 
+    "Web Screening Questionnaire", "Web Child (<9 years) Form", 
+    "Web Individual (>9 years) Form", "Web Intraoral Image Upload", 
+    "Web AI Analysis", "Web Results & Recommendations", "Web History Screen", 
+    "Web Profile Update", "Web Logout Flow"
 ]
 
 ACTIONS = [
-    "DOM Load Time", "Button Click", "Input Field", "Scrolling", "Navigation", 
-    "Data Fetch", "Validation", "Performance", "Canvas Rendering", "State Sync", 
-    "API Response", "Error Handling", "Form Submission", "Asset Loading"
+    "Button Click", "Navigation Transition", "Data Fetch", "Scrolling", 
+    "Form Validation", "Image Upload Validation", "Supabase DB Sync", 
+    "AI Prediction Rendering", "Input Field Interaction", "State Update"
 ]
 
 def get_selenium_driver():
