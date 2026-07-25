@@ -24,10 +24,11 @@ def generate_load_data(num_tests=310):
         duration = round(random.uniform(2.5, 15.0), 2)
         timestamp = (base_time + datetime.timedelta(seconds=i*3)).strftime("%Y-%m-%d %H:%M:%S")
         
-        test_name = f"Load - {component} - {scenario} - Test {i}"
+        test_name = f"Load - {component} - {scenario}"
         message = f"{scenario} completed successfully without throttling"
         
         tests.append({
+            "Test Number": i,
             "Test Name": test_name,
             "Status": "Passed",
             "Message": message,

@@ -26,10 +26,11 @@ def generate_validation_data(num_tests=310):
         duration = round(random.uniform(0.01, 1.2), 2)
         timestamp = (base_time + datetime.timedelta(seconds=i*3)).strftime("%Y-%m-%d %H:%M:%S")
         
-        test_name = f"API - {endpoint} - {validation} - Test {i}"
+        test_name = f"API - {endpoint} - {validation}"
         message = f"API {validation} handled correctly"
         
         tests.append({
+            "Test Number": i,
             "Test Name": test_name,
             "Status": "Passed",
             "Message": message,
