@@ -106,10 +106,12 @@ class _AppColors {
 InputDecoration _fieldDecoration(
     String label, {
       IconData? icon,
+      Widget? suffixIcon,
       required _Responsive r,
     }) =>
     InputDecoration(
       labelText: label,
+      suffixIcon: suffixIcon,
       labelStyle: TextStyle(
         color: _AppColors.textSecondary,
         fontSize: r.inputLabelSize,
@@ -161,6 +163,7 @@ class _MaternalChildFormScreenState extends State<MaternalChildFormScreen>
   String _name = '',
       _age = '',
       _gender = '',
+      _residentCity = '',
       _waterSource = '',
       _toothpasteType = '';
   String _milkIntake = '', _sugarLevels = '', _toothpasteSwallowing = '';
@@ -202,6 +205,7 @@ class _MaternalChildFormScreenState extends State<MaternalChildFormScreen>
         _name = profile['name']?.toString() ?? '';
         _age = profile['age']?.toString() ?? '';
         _gender = profile['gender']?.toString() ?? '';
+        _residentCity = profile['resident_city']?.toString() ?? '';
         _waterSource = profile['water_source']?.toString() ?? '';
         _toothpasteType = profile['toothpaste_type']?.toString() ?? '';
       }
@@ -410,8 +414,20 @@ class _MaternalChildFormScreenState extends State<MaternalChildFormScreen>
                   r: r,
                 ),
                 SizedBox(height: r.fieldGap),
+                TextFormField(
+                  decoration: _fieldDecoration(
+                    'Resident place till 8 years of age (City, State of India)',
+                    icon: Icons.location_city,
+                    r: r,
+                  ),
+                  initialValue: _residentCity,
+                  style: TextStyle(fontSize: r.inputLabelSize + 1),
+                  validator: (v) => v!.isEmpty ? 'Please enter city and state' : null,
+                  onSaved: (v) => _residentCity = v!,
+                ),
+                SizedBox(height: r.fieldGap),
                 _StyledDropdown<String>(
-                  label: 'Primary Water Source',
+                  label: 'Primary Water Source (till 8 yrs of age)',
                   icon: Icons.water_drop_outlined,
                   initialValue: _waterSource.isEmpty ? null : _waterSource,
                   items: const ['Well', 'RO', 'Ground', 'Other'],
@@ -419,14 +435,39 @@ class _MaternalChildFormScreenState extends State<MaternalChildFormScreen>
                   r: r,
                 ),
                 SizedBox(height: r.fieldGap),
-                TextFormField(
-                  decoration: _fieldDecoration(
-                    'Toothpaste Type / Brand',
-                    icon: Icons.brush_outlined,
-                    r: r,
+                _StyledDropdown<String>(
+                  label: 'Toothpaste Type',
+                  icon: Icons.brush_outlined,
+                  initialValue: () {
+                    const valid = ['Fluoridated', 'Non - Fluoridated', 'Herbal'];
+                    if (valid.contains(_toothpasteType)) return _toothpasteType;
+                    final l = _toothpasteType.toLowerCase();
+                    if (l.contains('non')) return 'Non - Fluoridated';
+                    if (l.contains('herbal')) return 'Herbal';
+                    if (l.contains('fluor')) return 'Fluoridated';
+                    return null;
+                  }(),
+                  items: const ['Fluoridated', 'Non - Fluoridated', 'Herbal'],
+                  onChanged: (v) => setState(() => _toothpasteType = v ?? ''),
+                  r: r,
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.info_outline, color: Color(0xFF00897B)),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Fluoride Information'),
+                          content: const Text('Check the active ingredients list on the back of your toothpaste tube or box. Look for "Sodium Fluoride", "Stannous Fluoride", or "Sodium Monofluorophosphate" to see if it is fluoridated.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Got it'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                  style: TextStyle(fontSize: r.inputLabelSize + 1),
-                  onSaved: (v) => _toothpasteType = v ?? '',
                 ),
               ],
             ),
@@ -558,6 +599,7 @@ class _MaternalChildFormScreenState extends State<MaternalChildFormScreen>
                           'name': _name,
                           'age': _age,
                           'gender': _gender,
+                          'resident_city': _residentCity,
                           'water_source': _waterSource,
                           'toothpaste_type': _toothpasteType,
                           'milk_intake': _milkIntake,
@@ -575,6 +617,7 @@ class _MaternalChildFormScreenState extends State<MaternalChildFormScreen>
                                 'name': _name,
                                 'age': _age,
                                 'gender': _gender,
+                                'resident_city': _residentCity,
                                 'water_source': _waterSource,
                                 'toothpaste_type': _toothpasteType,
                                 'user_type': 'Pregnant/Caretaker (<9yrs)',
@@ -653,6 +696,7 @@ class _StyledDropdown<T> extends StatelessWidget {
   final List<T> items;
   final ValueChanged<T?> onChanged;
   final _Responsive r;
+  final Widget? suffixIcon;
 
   const _StyledDropdown({
     required this.label,
@@ -661,6 +705,7 @@ class _StyledDropdown<T> extends StatelessWidget {
     required this.items,
     required this.onChanged,
     required this.r,
+    this.suffixIcon,
   });
 
   @override
@@ -668,11 +713,23 @@ class _StyledDropdown<T> extends StatelessWidget {
     return DropdownButtonFormField<T>(
       decoration: _fieldDecoration(label, icon: icon, r: r),
       value: initialValue,
-      icon: Icon(
-        Icons.expand_more_rounded,
-        color: _AppColors.textSecondary,
-        size: r.inputIconSize,
-      ),
+      icon: suffixIcon != null
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                suffixIcon!,
+                Icon(
+                  Icons.expand_more_rounded,
+                  color: _AppColors.textSecondary,
+                  size: r.inputIconSize,
+                ),
+              ],
+            )
+          : Icon(
+              Icons.expand_more_rounded,
+              color: _AppColors.textSecondary,
+              size: r.inputIconSize,
+            ),
       borderRadius: BorderRadius.circular(r.inputRadius),
       isExpanded: true, // prevents overflow on narrow screens
       items: items

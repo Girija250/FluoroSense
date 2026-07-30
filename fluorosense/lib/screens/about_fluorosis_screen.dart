@@ -51,7 +51,7 @@ class AboutFluorosisScreen extends StatelessWidget {
                   iconColor: const Color(0xFF006D6D),
                   title: 'What is Dental Fluorosis?',
                   body:
-                  'Dental fluorosis is a cosmetic condition that affects the teeth. It\'s caused by overexposure to fluoride during the first eight years of life, the time when most permanent teeth are being formed.',
+                  'Dental fluorosis is a common, painless condition characterized by changes in the appearance of tooth enamel, white spots or streaks, and intrinsic tooth discoloration. It\'s caused by overexposure to fluoride during the first eight years of life, the time when most permanent teeth are being formed.',
                 ),
                 const SizedBox(height: 16),
                 _InfoCard(
@@ -67,7 +67,7 @@ class AboutFluorosisScreen extends StatelessWidget {
                   iconColor: const Color(0xFF7B68EE),
                   title: 'Causes',
                   body:
-                  'The most common cause of fluorosis is the inappropriate use of fluoride-containing dental products such as toothpaste and mouth rinses. Another cause is taking a higher-than-prescribed amount of a fluoride supplement during early childhood.',
+                  'The most common cause of fluorosis is the intake of excessive fluoride during early childhood, primarily through drinking water with high fluoride concentrations and the use of fluoride-containing dental products such as toothpaste and mouth rinses. Accidental swallowing of highly fluoridated toothpaste, especially by young children during tooth brushing, can also contribute to increased fluoride exposure and the development of fluorosis.',
                 ),
                 const SizedBox(height: 20),
               ]),

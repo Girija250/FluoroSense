@@ -27,6 +27,7 @@ class ReportBase(BaseModel):
     milk_intake: Optional[str] = None
     sugar_levels: Optional[str] = None
     toothpaste_swallowing: Optional[str] = None
+    resident_city: Optional[str] = None
     classification: str
     confidence: float
     image_url: str

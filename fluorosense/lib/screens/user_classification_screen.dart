@@ -198,7 +198,7 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildFormLabel('Primary Water Source'),
+                _buildFormLabel('Primary Water Source (till 8 yrs of age)'),
                 const SizedBox(height: 8),
                 _buildDropdownField<String>(
                   hint: 'Select source',
@@ -211,16 +211,45 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
                   onChanged: (value) => waterSource = value ?? '',
                 ),
                 const SizedBox(height: 20),
-                _buildFormLabel('Toothpaste Type / Brand'),
+                _buildFormLabel(
+                  'Toothpaste Type',
+                  trailing: InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Fluoride Information'),
+                          content: const Text('Check the active ingredients list on the back of your toothpaste tube or box. Look for "Sodium Fluoride", "Stannous Fluoride", or "Sodium Monofluorophosphate" to see if it is fluoridated.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Got it'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.info_outline, size: 16, color: Color(0xFF00897B)),
+                  ),
+                ),
                 const SizedBox(height: 8),
-                _buildInputField(
-                  hint: 'e.g. Colgate, Sensodyne…',
+                _buildDropdownField<String>(
+                  hint: 'Select toothpaste type',
                   icon: Icons.cleaning_services_outlined,
-                  initialValue: toothpasteType,
+                  value: () {
+                    const valid = ['Fluoridated', 'Non - Fluoridated', 'Herbal'];
+                    if (valid.contains(toothpasteType)) return toothpasteType;
+                    final l = toothpasteType.toLowerCase();
+                    if (l.contains('non')) return 'Non - Fluoridated';
+                    if (l.contains('herbal')) return 'Herbal';
+                    if (l.contains('fluor')) return 'Fluoridated';
+                    return null;
+                  }(),
+                  items: ['Fluoridated', 'Non - Fluoridated', 'Herbal'],
                   validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter toothpaste type'
+                      ? 'Please select toothpaste type'
                       : null,
-                  onChanged: (value) => toothpasteType = value,
+                  onChanged: (value) => toothpasteType = value ?? '',
                 ),
                 const SizedBox(height: 28),
                 _buildPrimaryButton(
@@ -492,8 +521,8 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
     );
   }
 
-  Widget _buildFormLabel(String text) {
-    return Text(
+  Widget _buildFormLabel(String text, {Widget? trailing}) {
+    final labelText = Text(
       text,
       style: const TextStyle(
         fontSize: 13,
@@ -501,6 +530,17 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
         color: Color(0xFF37474F),
         letterSpacing: 0.2,
       ),
+    );
+    
+    if (trailing == null) return labelText;
+    
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        labelText,
+        const SizedBox(width: 6),
+        trailing,
+      ],
     );
   }
 
@@ -511,6 +551,7 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
     required List<String> items,
     required String? Function(T?)? validator,
     required ValueChanged<T?> onChanged,
+    Widget? suffixIcon,
   }) {
     return DropdownButtonFormField<T>(
       value: value,
@@ -524,6 +565,7 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
         hintText: hint,
         hintStyle: const TextStyle(color: Color(0xFFB0BEC5), fontSize: 14),
         prefixIcon: Icon(icon, color: const Color(0xFF90A4AE), size: 20),
+        suffixIcon: suffixIcon,
         filled: true,
         fillColor: const Color(0xFFF5F9F9),
         border: OutlineInputBorder(
@@ -558,6 +600,7 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
     String? initialValue,
     String? Function(String?)? validator,
     ValueChanged<String>? onChanged,
+    Widget? suffixIcon,
   }) {
     return TextFormField(
       initialValue: initialValue,
@@ -568,6 +611,7 @@ class _UserClassificationScreenState extends State<UserClassificationScreen>
         hintText: hint,
         hintStyle: const TextStyle(color: Color(0xFFB0BEC5), fontSize: 14),
         prefixIcon: Icon(icon, color: const Color(0xFF90A4AE), size: 20),
+        suffixIcon: suffixIcon,
         filled: true,
         fillColor: const Color(0xFFF5F9F9),
         border: OutlineInputBorder(

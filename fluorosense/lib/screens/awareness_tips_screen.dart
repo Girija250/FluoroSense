@@ -5,18 +5,12 @@ class AwarenessTipsScreen extends StatelessWidget {
 
   static const List<Map<String, dynamic>> _tips = [
     {
-      'icon': Icons.water_drop_rounded,
-      'color': Color(0xFF006D6D),
-      'title': 'Monitor Fluoride Intake',
-      'body':
-      'Be aware of the fluoride concentration in your drinking water. Your local water district can provide this information. If you use well water, have it tested annually.',
-    },
-    {
       'icon': Icons.brush_rounded,
       'color': Color(0xFF2196A8),
       'title': 'Use Fluoride Toothpaste Properly',
       'body':
       'For children under 3, use a smear of toothpaste the size of a grain of rice. For children 3 to 6, use a pea-sized amount. Supervise brushing to ensure they spit out the toothpaste and don\'t swallow it.',
+      'image': 'assets/toothpaste_guide.jpeg',
     },
     {
       'icon': Icons.medication_rounded,
@@ -81,6 +75,7 @@ class AwarenessTipsScreen extends StatelessWidget {
                       color: color,
                       title: tip['title'] as String,
                       body: tip['body'] as String,
+                      image: tip['image'] as String?,
                     ),
                   );
                 },
@@ -100,6 +95,7 @@ class _TipCard extends StatelessWidget {
   final Color color;
   final String title;
   final String body;
+  final String? image;
 
   const _TipCard({
     required this.number,
@@ -107,6 +103,7 @@ class _TipCard extends StatelessWidget {
     required this.color,
     required this.title,
     required this.body,
+    this.image,
   });
 
   @override
@@ -161,6 +158,35 @@ class _TipCard extends StatelessWidget {
                     color: Color(0xFF4A6060),
                   ),
                 ),
+                if (image != null) ...[
+                  const SizedBox(height: 16),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      image!,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: const Column(
+                            children: [
+                              Icon(Icons.image_not_supported_rounded, color: Colors.grey, size: 32),
+                              SizedBox(height: 8),
+                              Text('Please add toothpaste_guide.jpeg to assets/ directory to view the image.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontSize: 12)),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

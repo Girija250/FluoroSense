@@ -14,6 +14,7 @@ class _GeneralUserFormScreenState extends State<GeneralUserFormScreen> {
   String _name = '',
       _age = '',
       _gender = '',
+      _residentCity = '',
       _waterSource = '',
       _toothpasteType = '';
 
@@ -68,6 +69,13 @@ class _GeneralUserFormScreenState extends State<GeneralUserFormScreen> {
                       value: _gender.isEmpty ? null : _gender,
                       onChanged: (v) => setState(() => _gender = v.toString()),
                     ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      label: 'Resident place till 8 years of age (City, State of India)',
+                      icon: Icons.location_city,
+                      validator: (v) => v!.isEmpty ? 'Please enter city and state' : null,
+                      onSaved: (v) => _residentCity = v!,
+                    ),
                   ],
                 ),
 
@@ -78,17 +86,45 @@ class _GeneralUserFormScreenState extends State<GeneralUserFormScreen> {
                     _buildSectionLabel('Health Habits'),
                     const SizedBox(height: 16),
                     _buildDropdown(
-                      label: 'Primary Water Source',
+                      label: 'Primary Water Source (till 8 yrs of age)',
                       icon: Icons.water_drop_outlined,
                       items: ['Well', 'RO', 'Ground', 'Other'],
                       value: _waterSource.isEmpty ? null : _waterSource,
                       onChanged: (v) => setState(() => _waterSource = v.toString()),
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
-                      label: 'Toothpaste Type / Brand',
+                    _buildDropdown(
+                      label: 'Toothpaste Type',
                       icon: Icons.brush_outlined,
-                      onSaved: (v) => _toothpasteType = v!,
+                      items: ['Fluoridated', 'Non - Fluoridated', 'Herbal'],
+                      value: () {
+                        const valid = ['Fluoridated', 'Non - Fluoridated', 'Herbal'];
+                        if (valid.contains(_toothpasteType)) return _toothpasteType;
+                        final l = _toothpasteType.toLowerCase();
+                        if (l.contains('non')) return 'Non - Fluoridated';
+                        if (l.contains('herbal')) return 'Herbal';
+                        if (l.contains('fluor')) return 'Fluoridated';
+                        return null;
+                      }(),
+                      onChanged: (v) => setState(() => _toothpasteType = v.toString()),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.info_outline, color: Color(0xFF006D6D)),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Fluoride Information'),
+                              content: const Text('Check the active ingredients list on the back of your toothpaste tube or box. Look for "Sodium Fluoride", "Stannous Fluoride", or "Sodium Monofluorophosphate" to see if it is fluoridated.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('Got it'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -104,6 +140,7 @@ class _GeneralUserFormScreenState extends State<GeneralUserFormScreen> {
                         'name': _name,
                         'age': _age,
                         'gender': _gender,
+                        'resident_city': _residentCity,
                         'water_source': _waterSource,
                         'toothpaste_type': _toothpasteType,
                       };
@@ -115,6 +152,7 @@ class _GeneralUserFormScreenState extends State<GeneralUserFormScreen> {
                             'name': _name,
                             'age': _age,
                             'gender': _gender,
+                            'resident_city': _residentCity,
                             'water_source': _waterSource,
                             'toothpaste_type': _toothpasteType,
                             'user_type': 'Age 9+',
@@ -180,11 +218,13 @@ class _GeneralUserFormScreenState extends State<GeneralUserFormScreen> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     void Function(String?)? onSaved,
+    Widget? suffixIcon,
   }) {
     return TextFormField(
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: const Color(0xFF006D6D), size: 20),
+        suffixIcon: suffixIcon,
         labelStyle: const TextStyle(color: Color(0xFF4A6060), fontSize: 15),
         filled: true,
         fillColor: const Color(0xFFF0F7F7),
@@ -219,9 +259,19 @@ class _GeneralUserFormScreenState extends State<GeneralUserFormScreen> {
     required List<String> items,
     required String? value,
     required ValueChanged<Object?> onChanged,
+    Widget? suffixIcon,
   }) {
     return DropdownButtonFormField<String>(
       value: value,
+      icon: suffixIcon != null
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                suffixIcon,
+                const Icon(Icons.arrow_drop_down, color: Color(0xFF4A6060)),
+              ],
+            )
+          : const Icon(Icons.arrow_drop_down, color: Color(0xFF4A6060)),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: const Color(0xFF006D6D), size: 20),

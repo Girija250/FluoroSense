@@ -139,6 +139,7 @@ async def submit_report(
     milk_intake: str | None = Form(None),
     sugar_levels: str | None = Form(None),
     toothpaste_swallowing: str | None = Form(None),
+    resident_city: str | None = Form(None),
 ):
     if model is None:
         raise HTTPException(status_code=503, detail="ML model not loaded.")
@@ -192,6 +193,7 @@ async def submit_report(
         confidence=confidence,
         image_url=image_url,
         user_id=user_id,
+        resident_city=resident_city,
     )
     await supabase_service.create_report(report_data)
 

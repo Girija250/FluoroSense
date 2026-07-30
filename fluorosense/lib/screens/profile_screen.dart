@@ -409,7 +409,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           const SizedBox(height: 12),
           _ProfileDetailRow(
             icon: Icons.location_city,
-            label: 'Resident City',
+            label: 'Resident place till 8 years of age',
             value: _isFieldPresent(_residentCity) ? _residentCity : '—',
           ),
         ],
@@ -521,7 +521,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 const SizedBox(height: 14),
                 TextFormField(
                   initialValue: _residentCity,
-                  decoration: _fieldDec('Resident City',
+                  decoration: _fieldDec('Resident place till 8 years of age (City, State of India)',
                       icon: Icons.location_city),
                   onSaved: (v) => _residentCity = v!,
                 ),
@@ -1094,21 +1094,30 @@ class _ProfileDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: _AppColors.teal, size: 19),
-        const SizedBox(width: 12),
-        Text(
-          label,
-          style: const TextStyle(
-              color: _AppColors.textSecondary, fontSize: 14),
+        Padding(
+          padding: const EdgeInsets.only(top: 1),
+          child: Icon(icon, color: _AppColors.teal, size: 19),
         ),
-        const Spacer(),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: _AppColors.textPrimary,
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+                color: _AppColors.textSecondary, fontSize: 14),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: _AppColors.textPrimary,
+            ),
           ),
         ),
       ],
